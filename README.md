@@ -92,21 +92,29 @@ Copy code
 YoY Transactions %
 
 YoY Txn % :=
+
 VAR Prev = [Transactions PY]
+
 RETURN IF(ISBLANK(Prev) || Prev = 0, BLANK(), DIVIDE([Total Transactions] - Prev, Prev))
 
 
 CAGR Amount %
 
 CAGR Amount % = 
-VAR MinDate = CALCULATE(MIN('Dim_Date'[Date]), ALLSELECTED('Dim_Date'))
+
+VAR MinDate = CALCULATE(MIN('Dim_Date'[Date]), ALLSELECTED('Dim_Date')) 
+
 VAR MaxDate = CALCULATE(MAX('Dim_Date'[Date]), ALLSELECTED('Dim_Date'))
+
 VAR Years = DATEDIFF(MinDate, MaxDate, YEAR)
+
 VAR FirstAmt =
     CALCULATE([Total Amount], ALL('Dim_Date'), 'Dim_Date'[Date] = MinDate)
+    
 VAR LastAmt =
     CALCULATE([Total Amount], ALL('Dim_Date'), 'Dim_Date'[Date] = MaxDate)
 RETURN
+
 IF(Years > 0 && FirstAmt > 0,
     (LastAmt / FirstAmt) ^ (1 / Years) - 1
 )
