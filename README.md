@@ -87,44 +87,53 @@ Copy code
 
 ---
 
-## 📊 Key DAX Metrics
+📊 Key DAX (examples)
 
-### YoY Transactions %
-```dax
-YoY Transactions % :=
-VAR Prev = [Transactions PY (YQ Robust)]
-RETURN
-IF(ISBLANK(Prev) || Prev = 0, BLANK(), DIVIDE([Total Transactions] - Prev, Prev))
+YoY Transactions %
+
+YoY Txn % :=
+VAR Prev = [Transactions PY]
+RETURN IF(ISBLANK(Prev) || Prev = 0, BLANK(), DIVIDE([Total Transactions] - Prev, Prev))
+
+
 CAGR Amount %
-dax
-Copy code
-CAGR Amount % :=
-VAR MinY = MIN('Dim_Date'[Year])
-VAR MaxY = MAX('Dim_Date'[Year])
-VAR Years = MaxY - MinY
-VAR FirstAmt = CALCULATE([Total Amount], ALL('Dim_Date'), 'Dim_Date'[Year] = MinY)
-VAR LastAmt  = CALCULATE([Total Amount], ALL('Dim_Date'), 'Dim_Date'[Year] = MaxY)
-RETURN IF(Years > 0 && FirstAmt > 0, (LastAmt / FirstAmt) ^ (1/Years) - 1, BLANK())
-📝 Insights (High-Level)
-Southern states and Maharashtra dominate digital transactions.
 
-Category distribution reveals major usage patterns (e.g., P2P, recharge, merchant payments).
+CAGR Amount % = 
+VAR MinDate = CALCULATE(MIN('Dim_Date'[Date]), ALLSELECTED('Dim_Date'))
+VAR MaxDate = CALCULATE(MAX('Dim_Date'[Date]), ALLSELECTED('Dim_Date'))
+VAR Years = DATEDIFF(MinDate, MaxDate, YEAR)
+VAR FirstAmt =
+    CALCULATE([Total Amount], ALL('Dim_Date'), 'Dim_Date'[Date] = MinDate)
+VAR LastAmt =
+    CALCULATE([Total Amount], ALL('Dim_Date'), 'Dim_Date'[Date] = MaxDate)
+RETURN
+IF(Years > 0 && FirstAmt > 0,
+    (LastAmt / FirstAmt) ^ (1 / Years) - 1
+)
 
-Several states show positive YoY growth even if long-term CAGR dips.
+---
 
-Seasonal trends are visible across quarters.
+📝 Key Insights (concise)
 
-▶ Usage
-Download the .pbix file
+A few large states (e.g., Maharashtra, Karnataka) dominate transaction volume.
 
-Place CSVs into data/ folder
+Category mix shows dominant payment types (P2P / merchant / recharges).
 
-Open in Power BI
+YoY highlights recent growth/decline; CAGR indicates long-term trend (can be negative if ending < starting).
 
-Click Refresh
+Top-N slicer quickly surfaces highest contributing states.
 
-Explore with filters & slicers
+▶ How to use
+
+Download/open the .pbix file.
+
+Put CSVs in data/ folder.
+
+Refresh the model.
+
+Use slicers (Year, Quarter, State, Metric, Top-N) to explore.
 
 👨‍💻 Author
+
 Sibam Sen
 Data Visualization & Analytics Enthusiast
